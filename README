@@ -1,0 +1,9 @@
+This is a component to extend the core Auth component in CakePHP 
+
+created on: May 3rd, 2010
+
+Planned improvements:
+allowing convienance method of $this->Auth->user('User.username') or $this->Auth->user('Group.id')
+currently only takes first level of array and returns the entire thing ie: $this->Auth->user('Group') will return entire array
+
+More information can be found on my tumblr blog http://8bitorange.tumblr.com

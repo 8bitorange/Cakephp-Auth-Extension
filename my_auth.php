@@ -36,7 +36,7 @@ App::import('Component', 'Auth');
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  */
-class CosAuthComponent extends AuthComponent {
+class MyAuthComponent extends AuthComponent {
 
 
 
@@ -106,6 +106,10 @@ class CosAuthComponent extends AuthComponent {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
+			
+			if(empty($containable)){
+			 $data = $data[$this->userModel];
+			}
 		} elseif (!empty($user) && is_string($user)) {
 			$model =& $this->getModel();
 			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
@@ -121,6 +125,48 @@ class CosAuthComponent extends AuthComponent {
 			return $data;
 		}
 		return null;
+	}
+	
+/**
+ * Get the current user from the session.
+ *
+ * added the ability to return data deeper then first level.
+ *
+ * @param string $key field to retrive.  Leave null to get entire User record
+ * @return mixed User record. or null if no user is logged in.
+ * @access public
+ */
+	function user($key = null) {
+		$this->__setDefaults();
+		if (!$this->Session->check($this->sessionKey)) {
+			return null;
+		}
+
+		if ($key == null) {
+			return array($this->userModel => $this->Session->read($this->sessionKey));
+		} else {
+		    
+			$user = $this->Session->read($this->sessionKey);
+		    if(strstr($key, '.')){
+    		    $keys = explode('.',$key);
+    		    $count = count($keys);
+    		    
+    		    $i = 0;
+    		    while($i != $count){
+    		      if(isset($user[$keys[$i]])){
+    		          $user = $user[$keys[$i]];
+    		      }
+    		      if(($i + 1) == $count){
+    		          return $user;
+    		      }
+    		      $i++;
+    		    }
+    		    
+		    } elseif (isset($user[$key])) {
+				return $user[$key];
+			}
+			return null;
+		}
 	}
 }
 ?>
